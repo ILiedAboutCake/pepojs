@@ -70,5 +70,26 @@ module.exports = {
         await globalImagePool.reset();
       }
     }
+
+    if (filename) {
+      const frogPath = path.resolve(__dirname, '../../frogs', filename);
+      console.log(`attempting to remove frog ${frogPath} ${interaction.user.id} - ${url}`);
+
+      // try to nuke the file
+      try {
+        await fs.promises.rm(frogPath);
+      }
+      catch (err) {
+        await interaction.reply(`${frogPath} Not found on disk`);
+        console.log(err, frogPath);
+      }
+
+      // reset the cache to keep a dead frog from being seen (monkas)
+      await globalImagePool.reset();
+
+      // pass along to the caller the deletion worked
+      await interaction.reply(`${frogPath} Removed!`);
+
+    }
   },
 };
