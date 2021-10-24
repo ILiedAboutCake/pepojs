@@ -7,6 +7,9 @@ const crypto = require('crypto');
 const globalImagePool = require('../../helpers/imagepool');
 const config = require('../../config.json');
 
+// hash + filename validation
+const reg = new RegExp('^[0-9a-f]{40}\\.(png|jpg|gif)$');
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('frogmod')
@@ -46,12 +49,22 @@ module.exports = {
       const tempFileBuffer = await fs.promises.readFile(tempPath);
       console.log(`attempting to write frog to disk as temp file ${tempPath}`);
 
+      // remove the temp file from fs
+      await fs.promises.rm(tempPath);
+
       // get sha1 hash
       const hashSum = crypto.createHash('sha1');
       hashSum.update(tempFileBuffer);
       const frogHash = hashSum.digest('hex');
       const frogExtension = path.extname(tempPath);
       const frogFileName = `${frogHash}${frogExtension}`;
+
+      // validate the name of new frog
+      if (!reg.test(frogFileName)) {
+        await interaction.reply(`${frogFileName} Does not pass validation, skipping. (check console)`);
+        console.log(`${frogFileName} failed validation from user id ${interaction.user.id}`);
+        return;
+      }
 
       // get the frogs directory
       const existingFrogs = await fs.promises.readdir(path.resolve(__dirname, '../../frogs'));
@@ -65,15 +78,16 @@ module.exports = {
         console.log(`${frogFileName} is new, writing temp buffer to disk`);
         const frogAcceptedPath = path.resolve(__dirname, '../../frogs', frogFileName);
         await fs.promises.writeFile(frogAcceptedPath, tempFileBuffer);
-        await interaction.reply(`${frogFileName} Accepted to the PepoDB!`);
 
+        // new frog, invalidate cache to include it
         await globalImagePool.reset();
+
+        await interaction.reply(`${frogFileName} Accepted to the PepoDB!`);
       }
     }
 
     if (filename) {
       // although only the bot owner can run this command, regex to look for sha1+extension
-      const reg = new RegExp('^[0-9a-f]{40}\\.(png|jpg|gif)$');
       if (!reg.test(filename)) {
         await interaction.reply(`${filename} Does not validate safety checks. Sussy baka.`);
         console.log(`${filename} failed to verify as safe file path from ${interaction.user.id}`);

@@ -13,7 +13,7 @@ class ImagePool {
 
   async reset() {
     console.log('Resetting the image pool cache...');
-    const reg = new RegExp('jpg|gif|png');
+    const reg = new RegExp('^[0-9a-f]{40}\\.(png|jpg|gif)$');
     const frogsDirectory = await fs.promises.readdir('frogs');
     const frogs = frogsDirectory.filter(file => reg.test(file));
     console.log(`Frogbot image pool refilled with ${frogs.length} frogs`);
