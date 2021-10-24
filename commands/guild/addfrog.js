@@ -72,8 +72,16 @@ module.exports = {
     }
 
     if (filename) {
+      // although only the bot owner can run this command, regex to look for sha1+extension
+      const reg = new RegExp('^[0-9a-f]{40}\\.(png|jpg|gif)$');
+      if (!reg.test(filename)) {
+        await interaction.reply(`${filename} Does not validate safety checks. Sussy baka.`);
+        console.log(`${filename} failed to verify as safe file path from ${interaction.user.id}`);
+        return;
+      }
+
       const frogPath = path.resolve(__dirname, '../../frogs', filename);
-      console.log(`attempting to remove frog ${frogPath} ${interaction.user.id} - ${url}`);
+      console.log(`attempting to remove frog ${frogPath} invoked by ${interaction.user.id}`);
 
       // try to nuke the file
       try {
@@ -82,6 +90,7 @@ module.exports = {
       catch (err) {
         await interaction.reply(`${frogPath} Not found on disk`);
         console.log(err, frogPath);
+        return;
       }
 
       // reset the cache to keep a dead frog from being seen (monkas)
