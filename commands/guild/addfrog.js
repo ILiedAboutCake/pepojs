@@ -4,7 +4,7 @@ const axios = require('axios').default;
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
-const ImagePool = require('../../helpers/imagepool');
+const globalImagePool = require('../../helpers/imagepool');
 const config = require('../../config.json');
 
 module.exports = {
@@ -66,6 +66,8 @@ module.exports = {
         const frogAcceptedPath = path.resolve(__dirname, '../../frogs', frogFileName);
         await fs.promises.writeFile(frogAcceptedPath, tempFileBuffer);
         await interaction.reply(`${frogFileName} Accepted to the PepoDB!`);
+
+        await globalImagePool.reset();
       }
     }
   },
