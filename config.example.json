@@ -1,6 +1,14 @@
 {
-    "token":"",
+    "token": "",
     "clientId": "401939147981586443",
     "managementGuildId": "886699047027605535",
-    "legacyCommands": ["!pepo","!frog"]
+    "legacyCommands": [
+        "!pepo",
+        "!frog"
+    ],
+    "rateLimit": {
+        "default": 5,
+        "min": 5,
+        "max": 120
+    }
 }
