@@ -14,9 +14,17 @@ module.exports = {
 
   async execute(interaction) {
     const isLimited = await rateLimitControl.getRatelimitStatus(interaction);
+    if (isLimited === undefined) {
+      await interaction.reply({
+        content: 'Pepo is set to ignore this channel. Mods, you can adjust with `/frogmod set`',
+        ephemeral: true,
+      });
+      return;
+    }
+
     if (isLimited) {
       await interaction.reply({
-        content: 'Slow down! Ratelimit exceeded. Mods, you can adjust with `/frogmod`',
+        content: 'Slow down! Ratelimit exceeded. Mods, you can adjust with `/frogmod set`',
         ephemeral: true,
       });
       return;

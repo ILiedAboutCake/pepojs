@@ -15,8 +15,14 @@ module.exports = {
 
       // ratelimit check
       const isLimited = await rateLimitControl.getRatelimitStatus(message);
+
+      // workaround until message commands go away for muted channels
+      if (isLimited === undefined) {
+        return;
+      }
+
       if (isLimited) {
-        await message.reply('Slow down! Ratelimit exceeded. Tune your limit with `/frogmod`');
+        await message.reply('Slow down! Ratelimit exceeded. Mods, you can adjust with `/frogmod set`');
         return;
       }
 

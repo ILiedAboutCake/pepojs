@@ -54,6 +54,12 @@ class RateLimit {
 
   async getRatelimitStatus(interaction) {
     const rateLimit = await this.getChannelConfig(interaction);
+
+    if (rateLimit === 0) {
+      console.log(`${interaction.channel.id} is ignored.`);
+      return undefined;
+    }
+
     const lastUsed = await this.getChannelLastUsed(interaction);
     const notBefore = new Date(lastUsed.getTime() + rateLimit * 1000);
     const now = new Date();
