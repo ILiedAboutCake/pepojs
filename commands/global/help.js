@@ -14,10 +14,10 @@ module.exports = {
       \`/pepo\`: Post a frog
       \`/getpepo\`: Get the Discord invite URL for this bot
       \`/pingpepo\`: Check if Pepo is awake and feels like chatting :)
-      \`/frogmod get\`: Get the rate limit or ignored status for the current channel
+      \`/froglimit get\`: Get the rate limit or ignored status for the current channel
   
       **Moderation Commands:**
-      \`/frogmod set 0, [${config.rateLimit.min} - ${config.rateLimit.max}]\` seconds
+      \`/froglimit set 0, [${config.rateLimit.min} - ${config.rateLimit.max}]\` seconds
       Set to 0 to ignore the channel. Default ratelimit is ${config.rateLimit.default} seconds
       Setting ratelimit requires one of the following permissions: \`${config.frogmodFlags}\`
   

@@ -22,7 +22,7 @@ module.exports = {
       }
 
       if (isLimited) {
-        await message.reply('Slow down! Ratelimit exceeded. Mods, you can adjust with `/frogmod set`');
+        await message.reply('Slow down! Ratelimit exceeded. Mods, you can adjust with `/froglimit set`');
         return;
       }
 
