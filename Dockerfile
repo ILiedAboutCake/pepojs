@@ -11,7 +11,6 @@ RUN yarn install
 FROM node:16-slim
 
 WORKDIR /usr/src/app
-USER node
 
 COPY package.json package.json
 COPY --from=builder /usr/src/app/node_modules node_modules
