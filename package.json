@@ -10,6 +10,7 @@
     "axios": "^0.23.0",
     "discord-api-types": "^0.23.1",
     "discord.js": "^13.2.0",
+    "dotenv": "^10.0.0",
     "leveldown": "^6.1.0",
     "levelup": "^5.1.1",
     "memdown": "^6.1.1"

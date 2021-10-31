@@ -2,8 +2,9 @@ const fs = require('fs');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const config = require('./config.json');
+require('dotenv').config();
 
-const runtime = 'development';
+const runtime = process.env.RUNTIME || 'development';
 const rest = new REST({ version: '9' }).setToken(config.token);
 
 const commands = {
