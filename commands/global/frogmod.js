@@ -26,23 +26,38 @@ module.exports = {
       const setRate = await rateLimit.getChannelConfig(interaction);
       if (rl && setRate === userRate) {
         if (setRate === 0) {
-          interaction.reply(`${interaction.channel.name} is currently ignored.`);
+          interaction.reply({
+            content: `${interaction.channel.name} is currently ignored.`,
+            ephemeral: true,
+          });
         }
         else {
-          interaction.reply(`ratelimit set to ${setRate} seconds in ${interaction.channel.name}!`);
+          interaction.reply({
+            content: `ratelimit set to ${setRate} seconds in ${interaction.channel.name}!`,
+            ephemeral: true,
+          });
         }
       }
       else {
-        interaction.reply(`Something failed in setting ratelimit. You said ${userRate} but my database is still ${setRate}`);
+        interaction.reply({
+          content: `Something failed in setting ratelimit. You said ${userRate} but my database is still ${setRate}`,
+          ephemeral: true,
+        });
       }
     }
     else {
       const rl = await rateLimit.getChannelConfig(interaction);
       if (rl === 0) {
-        interaction.reply('Pepo is currently ignoring this channel and will not post frogs here :(');
+        interaction.reply({
+          content: 'Pepo is currently ignoring this channel and will not post frogs here :(',
+          ephemeral: true,
+        });
       }
       else {
-        interaction.reply(`current ratelimit for ${interaction.channel.name} is ${rl} seconds!`);
+        interaction.reply({
+          content: `current ratelimit for ${interaction.channel.name} is ${rl} seconds!`,
+          ephemeral: true,
+        });
       }
 
     }
