@@ -1,0 +1,14 @@
+version: '3.4'
+services:
+  frogbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: frogbot
+    volumes:
+      - ./config.json:/usr/src/app/config.json:ro
+      - ./ratelimit.leveldb:/usr/src/app/ratelimit.leveldb
+      - ./frogs:/usr/src/app/frogs
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
