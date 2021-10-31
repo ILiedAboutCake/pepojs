@@ -1,6 +1,7 @@
 const { MessageAttachment } = require('discord.js');
 const config = require('../config.json');
 const globalImagePool = require('../helpers/imagepool');
+const rateLimitControl = require('../helpers/ratelimts');
 
 module.exports = {
   name: 'messageCreate',
@@ -12,6 +13,13 @@ module.exports = {
     if (config.legacyCommands.some(cmd => message.content.startsWith(cmd))) {
       console.log(`[LEGACY COMMAND] ${message.author.id} in guild ${message.guild.id} sent ${message.content}`);
 
+      // ratelimit check
+      const isLimited = await rateLimitControl.getRatelimitStatus(message);
+      if (isLimited) {
+        await message.reply('Slow down! Ratelimit exceeded. Tune your limit with `/frogmod`');
+        return;
+      }
+
       const randomFrog = await globalImagePool.get();
       const attachment = new MessageAttachment(`frogs/${randomFrog}`);
 
@@ -20,6 +28,9 @@ module.exports = {
           content: 'After April 2022 slash commands are required by the Discord API. Give `/pepo` a try',
           files: [attachment],
         });
+
+      // ratelimit update
+      await rateLimitControl.setChannelLastUsed(message);
     }
   },
 };

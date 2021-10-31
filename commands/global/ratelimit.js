@@ -13,17 +13,17 @@ module.exports = {
       subcommand
         .setName('set')
         .setDescription('Configure this channels pepo posting cooldown (0 to mute bot)')
-        .addNumberOption(option => option.setName('seconds').setDescription('[0 - 120] seconds'))),
+        .addNumberOption(option => option.setName('seconds').setDescription('[0, 5 - 120] seconds'))),
 
   async execute(interaction) {
     const userRate = interaction.options.getNumber('seconds');
 
     if (Number.isInteger(userRate)) {
       // attempt to set the new rate limit
-      const rl = await rateLimit.set(interaction, userRate);
+      const rl = await rateLimit.setChannelConfig(interaction, userRate);
 
       // ask the db for the set ratelimit to confirm it set
-      const setRate = await rateLimit.get(interaction);
+      const setRate = await rateLimit.getChannelConfig(interaction);
       if (rl && setRate === userRate) {
         if (setRate === 0) {
           interaction.reply(`${interaction.channel.name} is currently ignored.`);
@@ -37,7 +37,7 @@ module.exports = {
       }
     }
     else {
-      const rl = await rateLimit.get(interaction);
+      const rl = await rateLimit.getChannelConfig(interaction);
       if (rl === 0) {
         interaction.reply('Pepo is currently ignoring this channel and will not post frogs here :(');
       }
