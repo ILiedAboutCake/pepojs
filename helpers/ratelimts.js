@@ -71,6 +71,19 @@ class RateLimit {
     }
   }
 
+  getModerationAllowed(interaction) {
+    // bot owner
+    if (interaction.member.id === config.managerId) return true;
+
+    // look for matching rules from config
+    const userRoles = interaction.member.permissions.toArray();
+    const match = userRoles.filter(value => config.frogmodFlags.includes(value));
+    console.log(`${interaction.member.id} matched ${match.length} moderation roles`);
+    if (match.length > 0) return true;
+
+    return false;
+  }
+
   validate(seconds) {
     if (!Number.isInteger(seconds)) {
       console.log(`supplied value is not an integer ${seconds}`);

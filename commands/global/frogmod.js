@@ -19,6 +19,17 @@ module.exports = {
     const userRate = interaction.options.getNumber('seconds');
 
     if (Number.isInteger(userRate)) {
+      // does the user have server permissions a moderator would expect
+      const isModerator = rateLimit.getModerationAllowed(interaction);
+      if (!isModerator) {
+        console.log(`${interaction.member.id} does not have required frogmod set permissions`);
+        interaction.reply({
+          content: 'You are missing permissions! Command requires `ADMINISTRATOR`, `MANAGE_GUILD`, OR `MANAGE_CHANNELS`',
+          ephemeral: true,
+        });
+        return;
+      }
+
       // attempt to set the new rate limit
       const rl = await rateLimit.setChannelConfig(interaction, userRate);
 
