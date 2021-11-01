@@ -11,7 +11,7 @@ module.exports = {
 
     // set legacyCommands in config.json with commands to redirect
     if (config.legacyCommands.some(cmd => message.content.startsWith(cmd))) {
-      console.log(`[LEGACY COMMAND] ${message.author.id} in guild ${message.guild.id} sent ${message.content}`);
+      console.log(`[LEGACY COMMAND] ${message.author.id} in guild ${message.guild.name} sent ${message.content}`);
 
       // ratelimit check
       const isLimited = await rateLimitControl.getRatelimitStatus(message);
