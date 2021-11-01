@@ -31,7 +31,9 @@ module.exports = {
 
       await message.reply(
         {
-          content: 'After April 2022 slash commands are required by the Discord API. Give /pepo a try',
+          content: `
+            After April 30, 2022 slash commands are required by the Discord API. Give /pepo a try
+            Learn more: <https://support.discord.com/hc/en-us/articles/4410940809111-Message-Content-Intent-Review-Policy>`,
           files: [attachment],
         });
 
