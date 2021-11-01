@@ -1,3 +1,4 @@
+const { MessageType } = require('discord.js');
 const { MessageAttachment } = require('discord.js');
 const config = require('../config.json');
 const globalImagePool = require('../helpers/imagepool');
@@ -11,6 +12,9 @@ module.exports = {
 
     // no everyone, mentions.has() includes @everyone/@here
     if (message.mentions.everyone) return;
+
+    // no reply to a reply
+    if (message.type === 'REPLY') return;
 
     // set legacyCommands in config.json with commands to redirect
     if (config.legacyCommands.some(cmd => message.content.startsWith(cmd)) || message.mentions.has(message.client.user)) {
@@ -32,11 +36,17 @@ module.exports = {
       const randomFrog = await globalImagePool.get();
       const attachment = new MessageAttachment(`frogs/${randomFrog}`);
 
-      await message.reply(
-        {
-          content: `After April 30, 2022 the way pepo can reply changes. Tag me in a message with <@${message.client.user.id}> or use \`/pepo\``,
-          files: [attachment],
-        });
+      // dont send warning on modern message
+      if (message.mentions.has(message.client.user)) {
+        await message.reply({ files: [attachment] });
+      }
+      else {
+        await message.reply(
+          {
+            content: `After April 30, 2022 the way pepo can reply changes. Tag me in a message with <@${message.client.user.id}> or use \`/pepo\``,
+            files: [attachment],
+          });
+      }
 
       // ratelimit update
       await rateLimitControl.setChannelLastUsed(message);
