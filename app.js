@@ -50,4 +50,8 @@ client.on('interactionCreate', async interaction => {
   }
 });
 
+process.on('unhandledRejection', err => {
+  console.log('uncaught exception:', err);
+});
+
 client.login(config.token);
