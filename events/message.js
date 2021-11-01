@@ -9,6 +9,9 @@ module.exports = {
     // no bots
     if (message.author.bot) return;
 
+    // no everyone, mentions.has() includes @everyone/@here
+    if (message.mentions.everyone) return;
+
     // set legacyCommands in config.json with commands to redirect
     if (config.legacyCommands.some(cmd => message.content.startsWith(cmd)) || message.mentions.has(message.client.user)) {
       console.log(`[LEGACY COMMAND] ${message.author.id} in guild ${message.guild.name} sent ${message.content}`);
