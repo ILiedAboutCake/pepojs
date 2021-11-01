@@ -10,7 +10,7 @@ module.exports = {
     if (message.author.bot) return;
 
     // set legacyCommands in config.json with commands to redirect
-    if (config.legacyCommands.some(cmd => message.content.startsWith(cmd))) {
+    if (config.legacyCommands.some(cmd => message.content.startsWith(cmd)) || message.mentions.has(message.client.user)) {
       console.log(`[LEGACY COMMAND] ${message.author.id} in guild ${message.guild.name} sent ${message.content}`);
 
       // ratelimit check
@@ -31,9 +31,7 @@ module.exports = {
 
       await message.reply(
         {
-          content: `
-            After April 30, 2022 slash commands are required by the Discord API. Give /pepo a try
-            Learn more: <https://support.discord.com/hc/en-us/articles/4410940809111-Message-Content-Intent-Review-Policy>`,
+          content: `After April 30, 2022 the way pepo can reply changes. Tag me in a message with <@${message.client.user.id}> or use \`/pepo\``,
           files: [attachment],
         });
 
