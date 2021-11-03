@@ -41,6 +41,7 @@ class ImagePool {
     // reset the cache if low
     if (frogCache.length <= 2) {
       console.log('Frog cache is LOW! resetting....');
+      this.reset();
     }
 
     // return a frog
