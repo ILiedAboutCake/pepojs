@@ -22,7 +22,7 @@ class ctxLogger {
       guildName: interaction.guild.name,
       channelID: interaction.channel.id,
       channelName: interaction.channel.name,
-      userID: interaction.member.id,
+      userID: interaction.member.user.id,
       userName: interaction.member.user.tag,
       commandName: interaction.commandName,
     });
