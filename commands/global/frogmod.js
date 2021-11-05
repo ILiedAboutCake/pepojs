@@ -15,15 +15,15 @@ module.exports = {
         .setDescription('Configure this channels pepo posting cooldown (0 to mute bot)')
         .addNumberOption(option => option.setName('seconds').setDescription('[0, 5 - 120] seconds'))),
 
-  async execute(interaction) {
-    const userRate = interaction.options.getNumber('seconds');
+  async execute(ctx) {
+    const userRate = ctx.interaction.options.getNumber('seconds');
 
     if (Number.isInteger(userRate)) {
       // does the user have server permissions a moderator would expect
-      const isModerator = rateLimit.getModerationAllowed(interaction);
+      const isModerator = rateLimit.getModerationAllowed(ctx);
       if (!isModerator) {
-        console.log(`${interaction.member.id} does not have required frogmod set permissions`);
-        interaction.reply({
+        ctx.logger.info(`${ctx.interaction.member.id} does not have required frogmod set permissions`);
+        await ctx.interaction.reply({
           content: 'You are missing permissions! Command requires `ADMINISTRATOR`, `MANAGE_GUILD`, OR `MANAGE_CHANNELS`',
           ephemeral: true,
         });
@@ -31,42 +31,42 @@ module.exports = {
       }
 
       // attempt to set the new rate limit
-      const rl = await rateLimit.setChannelConfig(interaction, userRate);
+      const rl = await rateLimit.setChannelConfig(ctx, userRate);
 
       // ask the db for the set ratelimit to confirm it set
-      const setRate = await rateLimit.getChannelConfig(interaction);
+      const setRate = await rateLimit.getChannelConfig(ctx);
       if (rl && setRate === userRate) {
         if (setRate === 0) {
-          interaction.reply({
-            content: `${interaction.channel.name} is currently ignored.`,
+          await ctx.interaction.reply({
+            content: `${ctx.interaction.channel.name} is currently ignored.`,
             ephemeral: true,
           });
         }
         else {
-          interaction.reply({
-            content: `ratelimit set to ${setRate} seconds in ${interaction.channel.name}!`,
+          await ctx.interaction.reply({
+            content: `ratelimit set to ${setRate} seconds in ${ctx.interaction.channel.name}!`,
             ephemeral: true,
           });
         }
       }
       else {
-        interaction.reply({
+        await ctx.interaction.reply({
           content: `Something failed in setting ratelimit. You said ${userRate} but my database is still ${setRate}`,
           ephemeral: true,
         });
       }
     }
     else {
-      const rl = await rateLimit.getChannelConfig(interaction);
+      const rl = await rateLimit.getChannelConfig(ctx);
       if (rl === 0) {
-        interaction.reply({
+        await ctx.interaction.reply({
           content: 'Pepo is currently ignoring this channel and will not post frogs here :(',
           ephemeral: true,
         });
       }
       else {
-        interaction.reply({
-          content: `current ratelimit for ${interaction.channel.name} is ${rl} seconds!`,
+        await ctx.interaction.reply({
+          content: `current ratelimit for ${ctx.interaction.channel.name} is ${rl} seconds!`,
           ephemeral: true,
         });
       }

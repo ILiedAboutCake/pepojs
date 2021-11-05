@@ -5,8 +5,8 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('pepohelp')
     .setDescription('Have a new frog to suggest? Think one should be removed? Can\'t remember the commands?'),
-  async execute(interaction) {
-    await interaction.reply({
+  async execute(ctx) {
+    await ctx.interaction.reply({
       content: `
       Frogbot 3 "Pepo". Built and maintained with love by Cake#0001 <https://cake.sh>
   

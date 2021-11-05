@@ -2,89 +2,92 @@ const levelup = require('levelup');
 const leveldown = require('leveldown');
 const memdown = require('memdown');
 const config = require('../config.json');
+const logger = require('../helpers/logging');
 
 class RateLimit {
   constructor(db, mem) {
     this.db = db;
     this.mem = mem;
+    this.logger = logger.baseLogger;
   }
 
-  async getChannelConfig(interaction) {
+  async getChannelConfig(ctx) {
     try {
-      const guildConfiguredRateLimit = await this.db.get(`${interaction.guild.id}:${interaction.channel.id}`, { asBuffer: false });
-      console.log(`leveldb returned ratelimit of ${guildConfiguredRateLimit} seconds for key ${interaction.guild.id}:${interaction.channel.id}`);
+      const guildConfiguredRateLimit = await this.db.get(`${ctx.interaction.guild.id}:${ctx.interaction.channel.id}`, { asBuffer: false });
+      ctx.logger.info(`leveldb returned ratelimit of ${guildConfiguredRateLimit}`);
       return parseInt(guildConfiguredRateLimit);
     }
     catch (err) {
-      console.log(`leveldb lookup failure for key: ${err} defaulting to global ratelimit`);
+      ctx.logger.info(`leveldb lookup failure for key: ${err} defaulting to global ratelimit`);
       return config.rateLimit.default;
     }
   }
 
-  async setChannelConfig(interaction, seconds) {
+  async setChannelConfig(ctx, seconds) {
     if (this.validate(seconds)) {
-      await this.db.put(`${interaction.guild.id}:${interaction.channel.id}`, seconds);
+      ctx.logger.info(`ratelimit set to ${seconds}`);
+      await this.db.put(`${ctx.interaction.guild.id}:${ctx.interaction.channel.id}`, seconds);
       return true;
     }
     else {
-      console.log('setting ratelimit failed due to validation failure :(');
+      ctx.logger.warn('setting ratelimit failed due to validation failure :(');
       return false;
     }
   }
 
-  async getChannelLastUsed(interaction) {
+  async getChannelLastUsed(ctx) {
     try {
       // get the buffer, setChannelLastUsed sets a date.utc buffer
-      const channelLastUsed = await this.mem.get(`${interaction.guild.id}:${interaction.channel.id}`);
-      console.log(`memdb returned ${channelLastUsed} seconds for key ${interaction.guild.id}:${interaction.channel.id}`);
+      const channelLastUsed = await this.mem.get(`${ctx.interaction.guild.id}:${ctx.interaction.channel.id}`);
+      ctx.logger.info(`memdb returned ${channelLastUsed} seconds`);
       return new Date(channelLastUsed);
     }
     catch (err) {
-      console.log(`memdb lookup failure for key ${err}.`);
+      ctx.logger.warn(`memdb lookup failure for key ${err}.`);
       // return a Date object of 1/1/1970 if not found
       return new Date(null);
     }
   }
 
-  async setChannelLastUsed(interaction) {
+  async setChannelLastUsed(ctx) {
     const now = new Date();
-    console.log(`Setting Last used to ${now} for channel ${interaction.channel.id}`);
-    await this.mem.put(`${interaction.guild.id}:${interaction.channel.id}`, now);
+    ctx.logger.info(`Setting Last used to ${now}`);
+    await this.mem.put(`${ctx.interaction.guild.id}:${ctx.interaction.channel.id}`, now);
   }
 
-  async getRatelimitStatus(interaction) {
-    const rateLimit = await this.getChannelConfig(interaction);
+  async getRatelimitStatus(ctx) {
+    const rateLimit = await this.getChannelConfig(ctx);
 
     if (rateLimit === 0) {
-      console.log(`${interaction.channel.id} is ignored.`);
+      ctx.logger.warn('channel ignored.');
       return undefined;
     }
 
-    const lastUsed = await this.getChannelLastUsed(interaction);
+    const lastUsed = await this.getChannelLastUsed(ctx);
     const notBefore = new Date(lastUsed.getTime() + rateLimit * 1000);
     const now = new Date();
 
-    console.log(`getCooldownStatus values: r:${rateLimit}, l:${lastUsed} n:${notBefore}`);
+    ctx.logger.info(`getCooldownStatus values: r:${rateLimit}, l:${lastUsed} n:${notBefore}`);
 
     // return true if we are in cooldown
     if (now.getTime() < notBefore.getTime()) {
-      console.log(`${interaction.channel.id} is rate limited`);
+      ctx.logger.warn('rate limited');
       return true;
     }
     else {
-      console.log(`${interaction.channel.id} is allowed to post`);
+      ctx.logger.info('allowed to post');
       return false;
     }
   }
 
-  getModerationAllowed(interaction) {
+  getModerationAllowed(ctx) {
     // bot owner
-    if (interaction.member.id === config.managerId) return true;
+    if (ctx.interaction.member.id === config.managerId) return true;
 
     // look for matching rules from config
-    const userRoles = interaction.member.permissions.toArray();
+    const userRoles = ctx.interaction.member.permissions.toArray();
     const match = userRoles.filter(value => config.frogmodFlags.includes(value));
-    console.log(`${interaction.member.id} matched ${match.length} moderation roles`);
+    ctx.logger.log(`${ctx.interaction.member.id} matched ${match.length} moderation roles`);
     if (match.length > 0) return true;
 
     return false;
@@ -92,24 +95,24 @@ class RateLimit {
 
   validate(seconds) {
     if (!Number.isInteger(seconds)) {
-      console.log(`supplied value is not an integer ${seconds}`);
+      this.logger.info(`supplied value is not an integer ${seconds}`);
       return false;
     }
 
     // return true for 0 = ignore
     if (seconds === 0) {
-      console.log(`Ratelimit validated at ${seconds} (ignore channel)`);
+      this.logger.info(`Ratelimit validated at ${seconds} (ignore channel)`);
       return true;
     }
 
     // validate between config min
     if (seconds >= config.rateLimit.min && seconds <= config.rateLimit.max) {
-      console.log(`Ratelimit validated at ${seconds} [${config.rateLimit.min} - ${config.rateLimit.max}]`);
+      this.logger.info(`Ratelimit validated at ${seconds} [${config.rateLimit.min} - ${config.rateLimit.max}]`);
       return true;
     }
 
     // failsafe
-    console.log(`Unable to validate ratelimit ${seconds}`);
+    this.logger.info(`Unable to validate ratelimit ${seconds}`);
     return false;
   }
 

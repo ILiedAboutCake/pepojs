@@ -25,15 +25,15 @@ module.exports = {
         .setDescription('Remove a frog')
         .addStringOption(option => option.setName('name').setDescription('Filename (SHA256Sum)'))),
 
-  async execute(interaction) {
+  async execute(ctx) {
     // only let bot admin do this
-    if (!interaction.user.id === config.managerId) return;
+    if (!ctx.interaction.user.id === config.managerId) return;
 
-    const url = interaction.options.getString('url');
-    const filename = interaction.options.getString('name');
+    const url = ctx.interaction.options.getString('url');
+    const filename = ctx.interaction.options.getString('name');
 
     if (url) {
-      console.log(`attempting to add new frog from ${interaction.user.id} - ${url}`);
+      ctx.logger.info(`attempting to add new frog from ${url}`);
 
       // prepare to download file, get fs location
       const fileNameTemp = path.parse(url).base;
@@ -47,7 +47,7 @@ module.exports = {
 
       // pull the temp file from fs
       const tempFileBuffer = await fs.promises.readFile(tempPath);
-      console.log(`attempting to write frog to disk as temp file ${tempPath}`);
+      ctx.logger.info(`attempting to write frog to disk as temp file ${tempPath}`);
 
       // remove the temp file from fs
       await fs.promises.rm(tempPath);
@@ -61,49 +61,49 @@ module.exports = {
 
       // validate the name of new frog
       if (!reg.test(frogFileName)) {
-        await interaction.reply(`${frogFileName} Does not pass validation, skipping. (check console)`);
-        console.log(`${frogFileName} failed validation from user id ${interaction.user.id}`);
+        await ctx.interaction.reply(`${frogFileName} Does not pass validation, skipping. (check console)`);
+        ctx.logger.warn(`${frogFileName} failed validation`);
         return;
       }
 
       // get the frogs directory
       const existingFrogs = await fs.promises.readdir(path.resolve(__dirname, '../../frogs'));
-      console.log(`Checking if ${frogFileName} already exists on disk`);
+      ctx.logger.info(`Checking if ${frogFileName} already exists on disk`);
 
       if (existingFrogs.includes(frogFileName)) {
-        console.log(`${frogFileName} Already exists, will not be added to disk`);
-        await interaction.reply(`${frogFileName} Already exists, ignoring`);
+        ctx.logger.info(`${frogFileName} Already exists, will not be added to disk`);
+        await ctx.interaction.reply(`${frogFileName} Already exists, ignoring`);
       }
       else {
-        console.log(`${frogFileName} is new, writing temp buffer to disk`);
+        ctx.logger.info(`${frogFileName} is new, writing temp buffer to disk`);
         const frogAcceptedPath = path.resolve(__dirname, '../../frogs', frogFileName);
         await fs.promises.writeFile(frogAcceptedPath, tempFileBuffer);
 
         // new frog, invalidate cache to include it
         await globalImagePool.reset();
 
-        await interaction.reply(`${frogFileName} Accepted to the PepoDB!`);
+        await ctx.interaction.reply(`${frogFileName} Accepted to the PepoDB!`);
       }
     }
 
     if (filename) {
       // although only the bot owner can run this command, regex to look for sha1+extension
       if (!reg.test(filename)) {
-        await interaction.reply(`${filename} Does not validate safety checks. Sussy baka.`);
-        console.log(`${filename} failed to verify as safe file path from ${interaction.user.id}`);
+        await ctx.interaction.reply(`${filename} Does not validate safety checks. Sussy baka.`);
+        ctx.logger.warn(`${filename} failed to verify as safe file path`);
         return;
       }
 
       const frogPath = path.resolve(__dirname, '../../frogs', filename);
-      console.log(`attempting to remove frog ${frogPath} invoked by ${interaction.user.id}`);
+      ctx.logger.warn(`attempting to remove frog ${frogPath}`);
 
       // try to nuke the file
       try {
         await fs.promises.rm(frogPath);
       }
       catch (err) {
-        await interaction.reply(`${frogPath} Not found on disk`);
-        console.log(err, frogPath);
+        await ctx.interaction.reply(`${frogPath} Not found on disk`);
+        ctx.logger.warn(err, frogPath);
         return;
       }
 
@@ -111,7 +111,7 @@ module.exports = {
       await globalImagePool.reset();
 
       // pass along to the caller the deletion worked
-      await interaction.reply(`${frogPath} Removed!`);
+      await ctx.interaction.reply(`${frogPath} Removed!`);
 
     }
   },

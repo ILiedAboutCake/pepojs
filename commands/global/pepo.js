@@ -12,10 +12,10 @@ module.exports = {
     .setName('pepo')
     .setDescription('Posts a picture of a frog.'),
 
-  async execute(interaction) {
-    const isLimited = await rateLimitControl.getRatelimitStatus(interaction);
+  async execute(ctx) {
+    const isLimited = await rateLimitControl.getRatelimitStatus(ctx);
     if (isLimited === undefined) {
-      await interaction.reply({
+      await ctx.interaction.reply({
         content: 'Pepo is set to ignore this channel. Mods, you can adjust with `/froglimit set`',
         ephemeral: true,
       });
@@ -23,7 +23,7 @@ module.exports = {
     }
 
     if (isLimited) {
-      await interaction.reply({
+      await ctx.interaction.reply({
         content: 'Slow down! Ratelimit exceeded. Mods, you can adjust with `/froglimit set`',
         ephemeral: true,
       });
@@ -33,8 +33,8 @@ module.exports = {
     const randomFrog = await globalImagePool.get();
     const attachment = new MessageAttachment(`frogs/${randomFrog}`);
 
-    await interaction.reply({ files: [attachment] });
+    await ctx.interaction.reply({ files: [attachment] });
 
-    await rateLimitControl.setChannelLastUsed(interaction);
+    await rateLimitControl.setChannelLastUsed(ctx);
   },
 };

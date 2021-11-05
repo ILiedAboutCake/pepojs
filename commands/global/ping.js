@@ -4,13 +4,13 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('pingpepo')
     .setDescription('Ping, Pong, Pepo. Check bot health.'),
-  async execute(interaction) {
-    await interaction.reply({
+  async execute(ctx) {
+    await ctx.interaction.reply({
       content: `Hello! I am awake and replying to requests:
       
-      Latency is ${Date.now() - interaction.createdTimestamp}ms. 
+      Latency is ${Date.now() - ctx.interaction.createdTimestamp}ms. 
       
-      API Latency is ${Math.round(interaction.client.ws.ping)}ms`,
+      API Latency is ${Math.round(ctx.interaction.client.ws.ping)}ms`,
       ephemeral: true,
     });
   },
