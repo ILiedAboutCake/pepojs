@@ -17,19 +17,23 @@ class ctxLogger {
   }
 
   addContextLogger(interaction) {
-    // the irony of needing console log in the logging child :joy:
-    console.log(interaction.member);
+    const loggingType = interaction.inGuild();
 
-    const childLogger = this.logger.child({
-      guildID: interaction.guild.id,
-      guildName: interaction.guild.name,
-      channelID: interaction.channel.id,
-      channelName: interaction.channel.name,
-      // userID: interaction.member.user.id,
-      // userName: interaction.member.user.tag,
-      commandName: interaction.commandName,
-    });
-    return childLogger;
+    if (loggingType) {
+      this.ctx = {
+        guildID: interaction.guild.id,
+        guildName: interaction.guild.name,
+        channelID: interaction.channel.id,
+        channelName: interaction.channel.name,
+        userID: interaction.member.id,
+        userName: interaction.member.user.tag,
+        commandName: interaction.commandName,
+      };
+    }
+    else {
+      this.ctx = {};
+    }
+    return this.logger.child(this.ctx);
   }
 }
 
