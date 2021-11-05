@@ -24,8 +24,8 @@ class ctxLogger {
         guildName: interaction.guild.name,
         channelID: interaction.channel.id,
         channelName: interaction.channel.name,
-        userID: interaction.member.user.id,
-        userName: interaction.member.user.username,
+        userID: interaction.author.id,
+        userName: interaction.author.username,
         commandName: 'Legacy',
       };
     }
