@@ -6,23 +6,23 @@ const rateLimitControl = require('../helpers/ratelimts');
 module.exports = {
   name: 'messageCreate',
   async execute(message, ctxLogger) {
-    // mock the context object we use around objects
-    const ctx = {
-      interaction: message,
-      logger: ctxLogger,
-    };
-
     // no bots
-    if (ctx.interaction.author.bot) return;
+    if (message.author.bot) return;
 
     // no everyone, mentions.has() includes @everyone/@here
-    if (ctx.interaction.mentions.everyone) return;
+    if (message.mentions.everyone) return;
 
     // no reply to a reply
-    if (ctx.interaction.type === 'REPLY') return;
+    if (message.type === 'REPLY') return;
 
     // set legacyCommands in config.json with commands to redirect
-    if (config.legacyCommands.some(cmd => ctx.interaction.content.startsWith(cmd)) || ctx.interaction.mentions.has(ctx.interaction.client.user)) {
+    if (config.legacyCommands.some(cmd => message.content.startsWith(cmd)) || message.mentions.has(message.client.user)) {
+      // mock the context object we use around objects
+      const ctx = {
+        interaction: message,
+        logger: ctxLogger,
+      };
+
       ctx.logger.info('[LEGACY COMMAND] invoked');
 
       // ratelimit check

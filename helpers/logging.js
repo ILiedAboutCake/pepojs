@@ -17,21 +17,34 @@ class ctxLogger {
   }
 
   addContextLogger(interaction) {
-    const loggingType = interaction.inGuild();
-
-    if (loggingType) {
+    if (interaction.constructor.name === 'Message') {
       this.ctx = {
+        interactionType: 'Message',
         guildID: interaction.guild.id,
         guildName: interaction.guild.name,
         channelID: interaction.channel.id,
         channelName: interaction.channel.name,
-        userID: interaction.member.id,
-        userName: interaction.member.user.tag,
+        userID: interaction.member.user.id,
+        userName: interaction.member.user.username,
+        commandName: 'Legacy',
+      };
+    }
+    else if (interaction.constructor.name === 'CommandInteraction') {
+      this.ctx = {
+        interactionType: 'CommandInteraction',
+        guildID: interaction.guild.id,
+        guildName: interaction.guild.name,
+        channelID: interaction.channel.id,
+        channelName: interaction.channel.name,
+        userID: interaction.user.id,
+        userName: interaction.user.username,
         commandName: interaction.commandName,
       };
     }
     else {
-      this.ctx = {};
+      this.ctx = {
+        interactionType: 'Unknown',
+      };
     }
     return this.logger.child(this.ctx);
   }

@@ -23,8 +23,8 @@ for (const file of eventFiles) {
   else {
     baseLogger.info(`Registering Reusable Event: ${event.name}`);
     client.on(event.name, (...args) => {
-      // const ctxLogger = contextLogger.addContextLogger(...args);
-      event.execute(...args, baseLogger);
+      const ctxLogger = contextLogger.addContextLogger(...args);
+      event.execute(...args, ctxLogger);
     });
   }
 }
