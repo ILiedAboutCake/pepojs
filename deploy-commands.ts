@@ -1,13 +1,13 @@
-const fs = require('fs');
-const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
-const config = require('./config.json');
+import fs from 'fs';
+import { REST } from '@discordjs/rest';
+import { Routes } from 'discord-api-types/v9';
+import config from './config.json';
 require('dotenv').config();
 
 const runtime = process.env.RUNTIME || 'development';
 const rest = new REST({ version: '9' }).setToken(config.token);
 
-const commands = {
+const commands: any = {
   guild: [],
   global: [],
 };

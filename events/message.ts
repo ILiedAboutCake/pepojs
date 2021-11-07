@@ -1,11 +1,11 @@
-const { MessageAttachment } = require('discord.js');
-const config = require('../config.json');
-const globalImagePool = require('../helpers/imagepool');
-const rateLimitControl = require('../helpers/ratelimts');
+import { MessageAttachment } from 'discord.js';
+import config from '../config.json';
+import globalImagePool from '../helpers/imagepool';
+import rateLimitControl from '../helpers/ratelimts';
 
-module.exports = {
+export default {
   name: 'messageCreate',
-  async execute(message, ctxLogger) {
+  async execute(message: any, ctxLogger: any) {
     // no bots
     if (message.author.bot) return;
 

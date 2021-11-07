@@ -1,10 +1,12 @@
-const fs = require('fs');
-const levelup = require('levelup');
-const memdown = require('memdown');
-const logger = require('../helpers/logging');
+import fs from 'fs';
+import levelup from 'levelup';
+import memdown from 'memdown';
+import logger from '../helpers/logging';
 
 class ImagePool {
-  constructor(db) {
+  db;
+  logger;
+  constructor(db: any) {
     this.db = db;
     this.logger = logger.baseLogger;
   }
@@ -33,7 +35,7 @@ class ImagePool {
     const randomFrog = frogCache[Math.floor(Math.random() * frogCache.length)];
 
     // remove the frog from list, re-pack the cache
-    frogCache = frogCache.filter(frog => frog !== randomFrog);
+    frogCache = frogCache.filter((frog: any) => frog !== randomFrog);
     await this.db.put('_frogcache', JSON.stringify(frogCache));
 
     this.logger.info(`frog pool is currently ${frogCache.length} after get()`);
@@ -52,4 +54,4 @@ class ImagePool {
 
 // init the image pool based on an in-memory instance of LevelDB
 const globalImagePool = new ImagePool(levelup(memdown()));
-module.exports = globalImagePool;
+export default globalImagePool;

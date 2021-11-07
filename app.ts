@@ -1,7 +1,7 @@
-const fs = require('fs');
-const { Client, Collection, Intents } = require('discord.js');
-const config = require('./config.json');
-const logger = require('./helpers/logging');
+import fs = require('fs');
+import { Client, Collection, Intents } from 'discord.js';
+import config from './config.json';
+import logger from './helpers/logging';
 
 const baseLogger = logger.baseLogger;
 const contextLogger = new logger.ctxLogger(baseLogger);
@@ -25,21 +25,21 @@ for (const file of eventFiles) {
   else {
     baseLogger.info(`Registering Reusable Event: ${event.name}`);
     client.on(event.name, (...args) => {
-      const ctxLogger = contextLogger.addContextLogger(...args);
+      const ctxLogger = contextLogger.addContextLogger({ ...args });
       event.execute(...args, ctxLogger);
     });
   }
 }
 
 // register commands, loop through scope folders and load all commands
-client.commands = new Collection();
+const commands: Collection<any, any> = new Collection();
 for (const commandFolderScope of fs.readdirSync('./commands')) {
   const commandFiles = fs.readdirSync(`./commands/${commandFolderScope}`).filter(file => file.endsWith('.js'));
 
   for (const file of commandFiles) {
     const command = require(`./commands/${commandFolderScope}/${file}`);
     baseLogger.info(`Registering ${commandFolderScope} slash command: ${command.data.name}`);
-    client.commands.set(command.data.name, command);
+    commands.set(command.data.name, command);
   }
 }
 
@@ -52,7 +52,7 @@ client.on('interactionCreate', async interaction => {
 
   if (!ctx.interaction.isCommand()) return;
 
-  const command = client.commands.get(ctx.interaction.commandName);
+  const command = commands.get(ctx.interaction.commandName);
 
   if (!command) return;
 

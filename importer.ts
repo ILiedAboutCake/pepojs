@@ -1,6 +1,6 @@
-const path = require('path');
-const fs = require('fs');
-const crypto = require('crypto');
+import path from 'path';
+import fs from 'fs';
+import crypto from 'crypto';
 
 // stolen logic from addfrog.js, will mass import blindly any files in _temp
 

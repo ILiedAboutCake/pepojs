@@ -1,6 +1,6 @@
-const config = require('../config.json');
-const winston = require('winston');
-const { ElasticsearchTransport } = require('winston-elasticsearch');
+import config from '../config.json';
+import winston from 'winston';
+import { ElasticsearchTransport } from 'winston-elasticsearch';
 
 const esTransport = new ElasticsearchTransport({
   level: 'info',
@@ -23,11 +23,13 @@ const logger = winston.createLogger({
 });
 
 class ctxLogger {
-  constructor(parentLogger) {
+  logger: any;
+  ctx: any;
+  constructor(parentLogger: any) {
     this.logger = parentLogger;
   }
 
-  addContextLogger(interaction) {
+  addContextLogger(interaction: any) {
     // sometimes unhealthy guilds dont send a guild ???? discord at scale sux
     if (!interaction.guild) {
       return this.logger.child({
@@ -72,8 +74,7 @@ class ctxLogger {
     return this.logger.child(this.ctx);
   }
 }
-
-module.exports = {
+export default {
   baseLogger: logger,
   ctxLogger: ctxLogger,
 };

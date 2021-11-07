@@ -1,10 +1,10 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+import { SlashCommandBuilder } from '@discordjs/builders';
 
-module.exports = {
+export default {
   data: new SlashCommandBuilder()
     .setName('pingpepo')
     .setDescription('Ping, Pong, Pepo. Check bot health.'),
-  async execute(ctx) {
+  async execute(ctx: any) {
     await ctx.interaction.reply({
       content: `Hello! I am awake and replying to requests:
       

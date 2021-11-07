@@ -1,16 +1,16 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { pipeline } = require('stream/promises');
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { pipeline } from 'stream/promises';
 const axios = require('axios').default;
-const path = require('path');
-const fs = require('fs');
-const crypto = require('crypto');
-const globalImagePool = require('../../helpers/imagepool');
-const config = require('../../config.json');
+import path from 'path';
+import fs from 'fs';
+import crypto from 'crypto';
+import globalImagePool from '../../helpers/imagepool';
+import config from '../../config.json';
 
 // hash + filename validation
 const reg = new RegExp('^[0-9a-f]{40}\\.(png|jpg|gif)$');
 
-module.exports = {
+export default {
   data: new SlashCommandBuilder()
     .setName('frogmod')
     .setDescription('Add or Remove frogs from bot')
@@ -25,9 +25,9 @@ module.exports = {
         .setDescription('Remove a frog')
         .addStringOption(option => option.setName('name').setDescription('Filename (SHA256Sum)'))),
 
-  async execute(ctx) {
+  async execute(ctx: any) {
     // only let bot admin do this
-    if (!ctx.interaction.user.id === config.managerId) return;
+    if (ctx.interaction.user.id !== config.managerId) return;
 
     const url = ctx.interaction.options.getString('url');
     const filename = ctx.interaction.options.getString('name');
@@ -42,7 +42,7 @@ module.exports = {
 
       // grab the frog, stream it to disk in a temp folder
       const rsp = await axios.request({ url, method: 'GET', responseType: 'stream' })
-        .catch((err) => console.log(err));
+        .catch((err: any) => console.log(err));
       await pipeline(rsp.data, writer);
 
       // pull the temp file from fs

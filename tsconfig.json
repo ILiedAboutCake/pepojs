@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "preserveConstEnums": true,
+    "noImplicitAny": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "target": "ES2015",
+    "outDir": "lib",
+  },
+  "files": [
+    "app.ts",
+    "deploy-commands.ts",
+    "importer.ts",
+  ],
+  "include": [
+    "commands/**/*",
+    "events/**/*",
+    "helpers/**/*",
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

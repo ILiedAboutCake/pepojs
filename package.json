@@ -18,6 +18,10 @@
     "winston-elasticsearch": "^0.15.9"
   },
   "devDependencies": {
+    "@types/leveldown": "^4.0.3",
+    "@types/levelup": "^4.3.3",
+    "@types/memdown": "^3.0.0",
+    "@types/node-fetch": "^3.0.3",
     "eslint": "^8.0.0"
   }
 }
