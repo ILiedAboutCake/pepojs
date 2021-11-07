@@ -6,6 +6,8 @@ const logger = require('./helpers/logging');
 const baseLogger = logger.baseLogger;
 const contextLogger = new logger.ctxLogger(baseLogger);
 
+baseLogger.info('PepoJS Init. Attempting to start, no promise I will work but sure can try :)');
+
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
   shards: 'auto',
@@ -64,7 +66,7 @@ client.on('interactionCreate', async interaction => {
 });
 
 process.on('unhandledRejection', err => {
-  console.log('uncaught exception:', err);
+  baseLogger.error(err);
 });
 
 client.login(config.token);

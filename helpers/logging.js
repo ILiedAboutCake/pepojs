@@ -17,6 +17,13 @@ class ctxLogger {
   }
 
   addContextLogger(interaction) {
+    // sometimes unhealthy guilds dont send a guild ???? discord at scale sux
+    if (!interaction.guild) {
+      return this.logger.child({
+        interactionType: 'MessagePartial',
+      });
+    }
+
     if (interaction.constructor.name === 'Message') {
       this.ctx = {
         interactionType: 'Message',
@@ -26,6 +33,7 @@ class ctxLogger {
         channelName: interaction.channel.name,
         userID: interaction.author.id,
         userName: interaction.author.username,
+        messageContent: interaction.content,
         commandName: 'Legacy',
       };
     }
