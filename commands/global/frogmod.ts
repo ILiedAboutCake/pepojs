@@ -1,21 +1,21 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const rateLimit = require('../../helpers/ratelimts');
+import { SlashCommandBuilder } from '@discordjs/builders';
+import rateLimit from '../../helpers/ratelimts';
 
-module.exports = {
+export default {
   data: new SlashCommandBuilder()
     .setName('froglimit')
     .setDescription('View or configure per-channel bot cooldown.')
-    .addSubcommand(subcommand =>
+    .addSubcommand((subcommand: any) =>
       subcommand
         .setName('get')
         .setDescription('View current limits enforced in this channel'))
-    .addSubcommand(subcommand =>
+    .addSubcommand((subcommand: any) =>
       subcommand
         .setName('set')
         .setDescription('Configure this channels pepo posting cooldown (0 to mute bot)')
-        .addNumberOption(option => option.setName('seconds').setDescription('[0, 5 - 120] seconds'))),
+        .addNumberOption((option: any) => option.setName('seconds').setDescription('[0, 5 - 120] seconds'))),
 
-  async execute(ctx) {
+  async execute(ctx: any) {
     const userRate = ctx.interaction.options.getNumber('seconds');
 
     if (Number.isInteger(userRate)) {

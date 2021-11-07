@@ -1,17 +1,20 @@
-const levelup = require('levelup');
-const leveldown = require('leveldown');
-const memdown = require('memdown');
-const config = require('../config.json');
-const logger = require('../helpers/logging');
+import levelup from 'levelup';
+import leveldown from 'leveldown';
+import memdown from 'memdown';
+import config from '../config.json';
+import logger from '../helpers/logging';
 
 class RateLimit {
-  constructor(db, mem) {
+  db;
+  mem;
+  logger;
+  constructor(db: any, mem: any) {
     this.db = db;
     this.mem = mem;
     this.logger = logger.baseLogger;
   }
 
-  async getChannelConfig(ctx) {
+  async getChannelConfig(ctx: any) {
     try {
       const guildConfiguredRateLimit = await this.db.get(`${ctx.interaction.guild.id}:${ctx.interaction.channel.id}`, { asBuffer: false });
       ctx.logger.info(`leveldb returned ratelimit of ${guildConfiguredRateLimit}`);
@@ -23,7 +26,7 @@ class RateLimit {
     }
   }
 
-  async setChannelConfig(ctx, seconds) {
+  async setChannelConfig(ctx: any, seconds: any) {
     if (this.validate(seconds)) {
       ctx.logger.info(`ratelimit set to ${seconds}`);
       await this.db.put(`${ctx.interaction.guild.id}:${ctx.interaction.channel.id}`, seconds);
@@ -35,7 +38,7 @@ class RateLimit {
     }
   }
 
-  async getChannelLastUsed(ctx) {
+  async getChannelLastUsed(ctx: any) {
     try {
       // get the buffer, setChannelLastUsed sets a date.utc buffer
       const channelLastUsed = await this.mem.get(`${ctx.interaction.guild.id}:${ctx.interaction.channel.id}`);
@@ -49,13 +52,13 @@ class RateLimit {
     }
   }
 
-  async setChannelLastUsed(ctx) {
+  async setChannelLastUsed(ctx: any) {
     const now = new Date();
     ctx.logger.info(`Setting Last used to ${now}`);
     await this.mem.put(`${ctx.interaction.guild.id}:${ctx.interaction.channel.id}`, now);
   }
 
-  async getRatelimitStatus(ctx) {
+  async getRatelimitStatus(ctx: any) {
     const rateLimit = await this.getChannelConfig(ctx);
 
     if (rateLimit === 0) {
@@ -80,20 +83,20 @@ class RateLimit {
     }
   }
 
-  getModerationAllowed(ctx) {
+  getModerationAllowed(ctx: any) {
     // bot owner
     if (ctx.interaction.member.id === config.managerId) return true;
 
     // look for matching rules from config
     const userRoles = ctx.interaction.member.permissions.toArray();
-    const match = userRoles.filter(value => config.frogmodFlags.includes(value));
+    const match = userRoles.filter((value: any) => config.frogmodFlags.includes(value));
     ctx.logger.log(`${ctx.interaction.member.id} matched ${match.length} moderation roles`);
     if (match.length > 0) return true;
 
     return false;
   }
 
-  validate(seconds) {
+  validate(seconds: any) {
     if (!Number.isInteger(seconds)) {
       this.logger.info(`supplied value is not an integer ${seconds}`);
       return false;
@@ -122,4 +125,4 @@ class RateLimit {
 const db = levelup(leveldown('./ratelimit.leveldb'));
 const mem = levelup(memdown());
 const RateLimitControl = new RateLimit(db, mem);
-module.exports = RateLimitControl;
+export default RateLimitControl;

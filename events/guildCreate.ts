@@ -1,6 +1,6 @@
-module.exports = {
+export default {
   name: 'guildCreate',
-  execute(guild, baseLogger) {
+  execute(guild: any, baseLogger: any) {
     // add in a little context
     const guildLogger = baseLogger.child({
       interactionType: 'guildCreate',

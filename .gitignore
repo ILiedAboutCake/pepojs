@@ -1,5 +1,5 @@
 config.json
-
+lib/
 node_modules/
 frogs/
 ratelimit.leveldb/

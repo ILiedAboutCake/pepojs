@@ -1,18 +1,18 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageAttachment } = require('discord.js');
-const globalImagePool = require('../../helpers/imagepool');
-const rateLimitControl = require('../../helpers/ratelimts');
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { MessageAttachment } from 'discord.js';
+import globalImagePool from '../../helpers/imagepool';
+import rateLimitControl from '../../helpers/ratelimts';
 
 (async () => {
   await globalImagePool.init();
 })();
 
-module.exports = {
+export default {
   data: new SlashCommandBuilder()
     .setName('pepo')
     .setDescription('Posts a picture of a frog.'),
 
-  async execute(ctx) {
+  async execute(ctx: any) {
     const isLimited = await rateLimitControl.getRatelimitStatus(ctx);
     if (isLimited === undefined) {
       await ctx.interaction.reply({

@@ -1,11 +1,11 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const config = require('../../config.json');
+import { SlashCommandBuilder } from '@discordjs/builders';
+import config from '../../config.json';
 
-module.exports = {
+export default {
   data: new SlashCommandBuilder()
     .setName('pepohelp')
     .setDescription('Have a new frog to suggest? Think one should be removed? Can\'t remember the commands?'),
-  async execute(ctx) {
+  async execute(ctx: any) {
     await ctx.interaction.reply({
       content: `
       Frogbot 3 "Pepo". Built and maintained with love by Cake#0001 <https://cake.sh>

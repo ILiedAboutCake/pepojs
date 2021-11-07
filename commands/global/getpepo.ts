@@ -1,11 +1,11 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const config = require('../../config.json');
+import { SlashCommandBuilder } from '@discordjs/builders';
+import config from '../../config.json';
 
-module.exports = {
+export default {
   data: new SlashCommandBuilder()
     .setName('getpepo')
     .setDescription('Want Pepo for your own server? Get my join url!'),
-  async execute(ctx) {
+  async execute(ctx: any) {
     await ctx.interaction.reply({
       content: `<https://discord.com/oauth2/authorize?client_id=${config.clientId}&scope=bot&permissions=274877942784>`,
       ephemeral: true,

@@ -1,6 +1,6 @@
-module.exports = {
+export default {
   name: 'interactionCreate',
-  execute(interaction, baseLogger) {
+  execute(interaction: any, baseLogger: any) {
     baseLogger.info(`interaction ${interaction.commandName} triggered`);
   },
 };
