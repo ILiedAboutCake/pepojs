@@ -7,15 +7,9 @@
     "esModuleInterop": true,
     "strict": true,
     "alwaysStrict": true,
-    "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "noUnusedLocals": true
   },
-  "exclude": [
-    "deploy-commands.js",
-    "importer.js",
-    "node_modules"
-  ]
 }
