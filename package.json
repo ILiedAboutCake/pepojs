@@ -18,6 +18,7 @@
     "winston-elasticsearch": "^0.15.9"
   },
   "devDependencies": {
+    "@types/node": "^16.11.7",
     "eslint": "^8.0.0"
   }
 }
