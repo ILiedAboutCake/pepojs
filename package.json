@@ -5,7 +5,8 @@
   "main": "dist/app.js",
   "license": "MIT",
   "scripts": {
-    "start": "node ."
+    "start": "node .",
+    "clean": "rimraf dist"
   },
   "dependencies": {
     "@discordjs/builders": "^0.6.0",
@@ -25,6 +26,7 @@
     "@types/levelup": "^4.3.3",
     "@types/memdown": "^3.0.0",
     "@types/node": "^16.11.7",
-    "eslint": "^8.0.0"
+    "eslint": "^8.0.0",
+    "rimraf": "^3.0.2"
   }
 }
