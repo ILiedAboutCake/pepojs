@@ -1,7 +1,7 @@
 import winston from "winston";
 import { PepoClient } from "../types";
 
-export default {
+module.exports = {
   name: "ready",
   once: true,
   execute(client: PepoClient, baseLogger: winston.Logger) {

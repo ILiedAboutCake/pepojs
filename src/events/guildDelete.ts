@@ -1,7 +1,7 @@
 import { Guild } from "discord.js";
 import winston from "winston";
 
-export default {
+module.exports = {
   name: "guildDelete",
   execute(guild: Guild, baseLogger: winston.Logger) {
     // add in a little context

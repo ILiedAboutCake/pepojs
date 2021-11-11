@@ -1,11 +1,12 @@
+import { Collection, Intents } from "discord.js";
 import fs from "fs";
-import { Client, Collection, Intents } from "discord.js";
+import path from "path";
 import config from "./config";
-import logger from "./helpers/logging";
-import { PepoClient } from "./types/pepoClient";
+import { ctxLogger, logger } from "./helpers/logging";
+import { PepoClient } from "./types/PepoClient";
 
-const baseLogger = logger.baseLogger;
-const contextLogger = new logger.ctxLogger(baseLogger);
+const baseLogger = logger;
+const contextLogger = new ctxLogger(baseLogger);
 
 baseLogger.info(
   "PepoJS Init. Attempting to start, no promise I will work but sure can try :)"
@@ -16,37 +17,43 @@ const client = new PepoClient({
   shards: "auto",
 });
 
+const eventsPath = path.join(__dirname, "../dist/events");
+
 // register events
 const eventFiles = fs
-  .readdirSync("./events")
-  .filter((file: any) => file.endsWith(".js"));
+  .readdirSync(eventsPath)
+  .filter((file) => file.endsWith(".js"));
 
 for (const file of eventFiles) {
-  const event = require(`./events/${file}`);
+  const event = require(path.join(eventsPath, file));
   if (event.once) {
     baseLogger.info(`Registering Once Event: ${event.name}`);
-    client.once(event.name, (...args) => event.execute(...args, baseLogger));
+    client.once(event.name, (args) => event.execute(args, baseLogger));
   } else {
     baseLogger.info(`Registering Reusable Event: ${event.name}`);
-    client.on(event.name, (...args) => {
-      const ctxLogger = contextLogger.addContextLogger(...args);
-      event.execute(...args, ctxLogger);
+    client.on(event.name, (args) => {
+      const ctxLogger = contextLogger.addContextLogger(args);
+      event.execute(args, ctxLogger);
     });
   }
 }
 
+const commandsPath = path.join(__dirname, "../dist/commands");
+
 // register commands, loop through scope folders and load all commands
 client.commands = new Collection();
-for (const commandFolderScope of fs.readdirSync("./commands")) {
+for (const commandFolderScope of fs.readdirSync(commandsPath)) {
   const commandFiles = fs
-    .readdirSync(`./commands/${commandFolderScope}`)
+    .readdirSync(path.join(commandsPath, commandFolderScope))
     .filter((file) => file.endsWith(".js"));
 
   for (const file of commandFiles) {
-    const command = require(`./commands/${commandFolderScope}/${file}`);
+    const command = require(path.join(commandsPath, commandFolderScope, file));
+
     baseLogger.info(
       `Registering ${commandFolderScope} slash command: ${command.data.name}`
     );
+
     client.commands.set(command.data.name, command);
   }
 }

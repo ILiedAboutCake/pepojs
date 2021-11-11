@@ -1,9 +1,9 @@
-import { Message } from "discord.js";
+import { CommandInteraction, Message } from "discord.js";
 import winston from "winston";
 
 export interface Ctx {
   logger: winston.Logger;
-  interaction: Message;
+  interaction: Message | CommandInteraction;
 }
 
 export type LoggerCtx = partialCtx | messageCtx | interactionCtx | unkownCtx;

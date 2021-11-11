@@ -5,7 +5,7 @@ import config from "../config";
 import globalImagePool from "../helpers/imagepool";
 import rateLimitControl from "../helpers/ratelimts";
 
-export default {
+module.exports = {
   name: "messageCreate",
   async execute(message: Message, ctxLogger: winston.Logger) {
     // no bots

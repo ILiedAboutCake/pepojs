@@ -1,3 +1,4 @@
+import { GuildMember } from "discord.js";
 import leveldown from "leveldown";
 import levelup from "levelup";
 import memdown from "memdown";
@@ -35,7 +36,7 @@ class RateLimit {
     }
   }
 
-  async setChannelConfig(ctx: any, seconds: number) {
+  async setChannelConfig(ctx: any, seconds: number | null) {
     if (this.validate(seconds)) {
       ctx.logger.info(`ratelimit set to ${seconds}`);
       await this.db.put(
@@ -101,23 +102,24 @@ class RateLimit {
 
   getModerationAllowed(ctx: Ctx) {
     // bot owner
-    if (ctx.interaction.member?.id === config.managerId) return true;
+    if (ctx.interaction.member?.user.id === config.managerId) return true;
+
+    const member = ctx.interaction.member;
+    if (!(member instanceof GuildMember)) return false;
 
     // look for matching rules from config
-    const userRoles = ctx.interaction.member?.permissions.toArray();
+    const userRoles = member.permissions.toArray();
     const match =
       userRoles?.filter((value) => config.frogmodFlags.includes(value)) || [];
 
-    ctx.logger.info(
-      `${ctx.interaction.member?.id} matched ${match.length} moderation roles`
-    );
+    ctx.logger.info(`${member.id} matched ${match.length} moderation roles`);
 
     if (match.length > 0) return true;
 
     return false;
   }
 
-  validate(seconds: number) {
+  validate(seconds: any) {
     if (!Number.isInteger(seconds)) {
       this.logger.info(`supplied value is not an integer ${seconds}`);
       return false;
