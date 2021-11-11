@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "CommonJS",
+    "rootDir": "src/",
+    "outDir": "dist/",
+    "esModuleInterop": true,
+    "strict": true,
+    "alwaysStrict": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "exclude": [
+    "deploy-commands.js",
+    "importer.js",
+    "node_modules"
+  ]
+}
