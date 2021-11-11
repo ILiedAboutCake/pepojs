@@ -1,5 +1,7 @@
+import "dotenv/config";
+
 export default {
-  token: "",
+  token: process.env.TOKEN,
   clientId: "401939147981586443",
   managerId: "252869311545212928",
   managementGuildId: "886699047027605535",
@@ -11,5 +13,5 @@ export default {
     min: 5,
     max: 120,
   },
-  elasticServer: "http://127.0.0.1:9200",
+  elasticServer: process.env.ELASTIC_SERVER,
 };
