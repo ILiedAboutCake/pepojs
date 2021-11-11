@@ -2,8 +2,11 @@
   "name": "pepojs",
   "version": "1.0.0",
   "description": "frogbot, but in discordjs",
-  "main": "app.js",
+  "main": "dist/app.js",
   "license": "MIT",
+  "scripts": {
+    "start": "node ."
+  },
   "dependencies": {
     "@discordjs/builders": "^0.6.0",
     "@discordjs/rest": "^0.1.0-canary.0",
