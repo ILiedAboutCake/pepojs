@@ -17,4 +17,6 @@ COPY --from=builder /usr/src/app/node_modules node_modules
 
 COPY . .
 
-CMD ["node", "/usr/src/app/app.js"]
+RUN npx tsc
+
+CMD ["node", "/usr/src/app/dist/app.js"]

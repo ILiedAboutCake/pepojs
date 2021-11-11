@@ -1,7 +1,8 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageAttachment } = require('discord.js');
-const globalImagePool = require('../../helpers/imagepool');
-const rateLimitControl = require('../../helpers/ratelimts');
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { MessageAttachment } from "discord.js";
+import globalImagePool from "../../helpers/imagepool";
+import rateLimitControl from "../../helpers/ratelimts";
+import { Ctx } from "../../types";
 
 (async () => {
   await globalImagePool.init();
@@ -9,14 +10,15 @@ const rateLimitControl = require('../../helpers/ratelimts');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('pepo')
-    .setDescription('Posts a picture of a frog.'),
+    .setName("pepo")
+    .setDescription("Posts a picture of a frog."),
 
-  async execute(ctx) {
+  async execute(ctx: Ctx) {
     const isLimited = await rateLimitControl.getRatelimitStatus(ctx);
     if (isLimited === undefined) {
       await ctx.interaction.reply({
-        content: 'Pepo is set to ignore this channel. Mods, you can adjust with `/froglimit set`',
+        content:
+          "Pepo is set to ignore this channel. Mods, you can adjust with `/froglimit set`",
         ephemeral: true,
       });
       return;
@@ -24,7 +26,8 @@ module.exports = {
 
     if (isLimited) {
       await ctx.interaction.reply({
-        content: 'Slow down! Ratelimit exceeded. Mods, you can adjust with `/froglimit set`',
+        content:
+          "Slow down! Ratelimit exceeded. Mods, you can adjust with `/froglimit set`",
         ephemeral: true,
       });
       return;
