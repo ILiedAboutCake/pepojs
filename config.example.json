@@ -17,6 +17,5 @@
         "default": 5,
         "min": 5,
         "max": 120
-    },
-    "elasticServer": "http://127.0.0.1:9200"
+    }
 }

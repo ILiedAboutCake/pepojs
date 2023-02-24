@@ -1,14 +1,4 @@
-const config = require('../config.json');
 const winston = require('winston');
-const { ElasticsearchTransport } = require('winston-elasticsearch');
-
-const esTransport = new ElasticsearchTransport({
-  level: 'info',
-  indexPrefix: 'pepojs',
-  clientOpts: {
-    node: config.elasticServer,
-  },
-});
 
 const logger = winston.createLogger({
   format: winston.format.combine(
@@ -18,7 +8,6 @@ const logger = winston.createLogger({
   defaultMeta: { service: 'pepojs' },
   transports: [
     new winston.transports.Console(),
-    esTransport,
   ],
 });
 
